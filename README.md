@@ -33,3 +33,185 @@ Installez les dépendances via pip :
 
 ```bash
 pip install -r requirements.txt
+```
+
+## Exemple de Code
+
+### Chargement et Segmentation de Documents PDF
+
+Le script suivant charge un ou plusieurs fichiers PDF, les segmente en chunks, puis les stocke dans une base de données vectorielle FAISS pour permettre des recherches rapides basées sur les similarités textuelles.
+
+```python
+import os
+import pickle
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.document_loaders import PyPDFLoader, PyPDFDirectoryLoader
+from langchain_community.vectorstores import FAISS
+
+# Chemins des fichiers et dossiers
+document_path = "./pdf_samples/livre.pdf"  # Remplacez par votre chemin d'entrée
+vector_db_path = "./vector_db"  # Remplacez par votre chemin de sortie
+targetdb = vector_db_path + ".pkl"
+
+# Vérification des chemins
+assert os.path.exists(document_path), f"Chemin introuvable : {document_path}"
+
+# Chargement des documents
+if os.path.isdir(document_path):
+    loader = PyPDFDirectoryLoader(document_path)
+else:
+    loader = PyPDFLoader(document_path)
+
+documents = loader.load()
+
+# Segmentation optimisée du texte en chunks
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=100000, chunk_overlap=0)
+document_chunks = []
+for doc in documents:
+    chunks = text_splitter.split_documents([doc])
+    document_chunks.extend(chunks)
+
+# Création ou chargement de la base de données vectorielle
+if os.path.isfile(targetdb):
+    with open(targetdb, "rb") as f:
+        vector_store = pickle.load(f)
+    vector_store.add_documents(document_chunks)
+else:
+    embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-base", model_kwargs={"device": "cpu"})
+    vector_store = FAISS.from_documents(document_chunks, embeddings)
+
+# Sauvegarde de la base de données vectorielle
+with open(targetdb, "wb") as f:
+    pickle.dump(vector_store, f)
+```
+## Recherche dans la Base de Données Vectorielle
+
+Le script suivant montre comment interroger la base de données vectorielle pour rechercher des recettes spécifiques et afficher leurs informations pertinentes.
+
+```python
+import pickle
+from langchain_community.vectorstores import FAISS
+
+# Charger la base de données vectorielle
+vector_db_path = "./vector_db.pkl"
+with open(vector_db_path, "rb") as f:
+    vector_store = pickle.load(f)
+
+def get_document_by_id(doc_id):
+    """
+    Récupérer un document du vecteur stocké par son ID.
+    
+    Args:
+        doc_id (any): L'ID du document à récupérer
+    
+    Returns:
+        tuple: (document_id, document)
+    """
+    try:
+        document = vector_store.docstore._dict[doc_id]
+        return doc_id, document
+    except KeyError:
+        print(f"Aucun document trouvé avec l'ID '{doc_id}'.")
+        return None, None
+
+# Exemple d'utilisation
+specific_doc_id = "f4cea6cb-0463-4e45-b5b2-450412522490"
+document_id, document = get_document_by_id(specific_doc_id)
+
+if document:
+    print(f"Document ID : {document_id}")
+    print(f"Métadonnées : {document.metadata}")
+    print(f"Contenu : {document.page_content[:500]}")
+```
+
+## Utilisation d'un Modèle Génératif avec BAM
+
+Le projet inclut une intégration avec le modèle génératif de BAM pour extraire des informations pertinentes à partir des recettes.
+
+```python
+import os
+from dotenv import load_dotenv
+from genai import Credentials, Client
+from genai.schema import TextGenerationParameters
+from genai.extensions.langchain import LangChainInterface
+
+# Charger les variables d'environnement
+load_dotenv()
+
+cle_api_bam = os.getenv("GENAI_KEY")
+endpoint_bam = os.getenv("GENAI_ENDPOINT")
+
+credentials_bam = Credentials(cle_api_bam, api_endpoint=endpoint_bam)
+client_bam = Client(credentials=credentials_bam)
+
+params_bam = TextGenerationParameters(
+    decoding_method="greedy", max_new_tokens=500, min_new_tokens=10
+)
+
+modele = LangChainInterface(
+    model_id="mistralai/mixtral-8x7b-instruct-v01",
+    client=client_bam,
+    parameters=params_bam
+)
+
+def generer_info_recettes(texte_recette):
+    """
+    Génère des informations de recette à partir du texte.
+    """
+    # Code pour générer la réponse avec le modèle
+    ...
+## Utilisation d'un Modèle Génératif avec BAM
+
+Le projet inclut une intégration avec le modèle génératif de BAM pour extraire des informations pertinentes à partir des recettes.
+
+```python
+import os
+from dotenv import load_dotenv
+from genai import Credentials, Client
+from genai.schema import TextGenerationParameters
+from genai.extensions.langchain import LangChainInterface
+
+# Charger les variables d'environnement
+load_dotenv()
+
+cle_api_bam = os.getenv("GENAI_KEY")
+endpoint_bam = os.getenv("GENAI_ENDPOINT")
+
+credentials_bam = Credentials(cle_api_bam, api_endpoint=endpoint_bam)
+client_bam = Client(credentials=credentials_bam)
+
+params_bam = TextGenerationParameters(
+    decoding_method="greedy", max_new_tokens=500, min_new_tokens=10
+)
+
+modele = LangChainInterface(
+    model_id="mistralai/mixtral-8x7b-instruct-v01",
+    client=client_bam,
+    parameters=params_bam
+)
+
+def generer_info_recettes(texte_recette):
+    """
+    Génère des informations de recette à partir du texte.
+    """
+    # Code pour générer la réponse avec le modèle
+    ...
+```
+
+## Exécution
+
+Pour exécuter le projet, suivez les étapes suivantes :
+
+1. **Chargement des documents** : Utilisez le script de chargement pour segmenter et stocker les documents dans une base vectorielle.
+2. **Recherche de recettes** : Utilisez le script de recherche pour interroger la base de données vectorielle.
+3. **Génération d'informations** : Utilisez le modèle BAM pour extraire des informations pertinentes des recettes.
+
+## Contributions
+
+Les contributions sont les bienvenues. Veuillez soumettre des demandes de tirage (PR) avec des descriptions détaillées des modifications.
+
+## Licence
+
+Ce projet est sous licence MIT. Veuillez vous référer au fichier LICENSE pour plus d'informations.
+
