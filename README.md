@@ -161,6 +161,8 @@ def generer_info_recettes(texte_recette):
     """
     # Code pour générer la réponse avec le modèle
     ...
+```
+
 ## Utilisation d'un Modèle Génératif avec BAM
 
 Le projet inclut une intégration avec le modèle génératif de BAM pour extraire des informations pertinentes à partir des recettes.
