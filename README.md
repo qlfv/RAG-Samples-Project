@@ -10,24 +10,18 @@ Ce répertoire, nommé **RAG-Samples-Project**, est dédié à la démonstration
 
 ## Structure des Fichiers
 
-- `rag_samples.py` : Contient les scripts de traitement, de segmentation et de vectorisation des documents PDF.
+- `load_and_segment_documents.py` : Script pour le chargement, la segmentation et la vectorisation des documents PDF.
+- `query_vector_database.py` : Script pour interroger la base de données vectorielle et récupérer les informations pertinentes.
 - `vector_db.pkl` : Fichier contenant la base de données vectorielle générée à partir des embeddings des documents.
-- `credentials.env` : Fichier pour stocker les informations d'authentification pour le modèle génératif BAM et autres services externes.
 - `README.md` : Ce fichier, qui explique la structure et les objectifs du projet.
+- `requirements.txt` : Liste des dépendances Python nécessaires pour exécuter les scripts.
 
 ## Prérequis
 
 Avant de lancer les scripts, assurez-vous que les éléments suivants sont installés :
 
-- Python 3.8 ou supérieur
-- Les bibliothèques Python suivantes :
-  - `langchain`
-  - `langchain_community`
-  - `sentence-transformers`
-  - `genai`
-  - `faiss`
-  - `dotenv`
-  - `pickle`
+- **Python** 3.8 ou supérieur
+- Les bibliothèques Python listées dans `requirements.txt`.
 
 Installez les dépendances via pip :
 
