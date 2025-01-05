@@ -35,95 +35,15 @@ Installez les dépendances via pip :
 pip install -r requirements.txt
 ```
 
-## Exemple de Code
+## Exemple de Code :
 
 ### Chargement et Segmentation de Documents PDF
 
-Le script suivant charge un ou plusieurs fichiers PDF, les segmente en chunks, puis les stocke dans une base de données vectorielle FAISS pour permettre des recherches rapides basées sur les similarités textuelles.
+Le code pour charger et segmenter des documents PDF se trouve dans le fichier [`load_and_segment_documents.py`](./load_and_segment_documents.py).
 
-```python
-import os
-import pickle
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.document_loaders import PyPDFLoader, PyPDFDirectoryLoader
-from langchain_community.vectorstores import FAISS
+### Recherche dans la Base de Données Vectorielle
 
-# Chemins des fichiers et dossiers
-document_path = "./pdf_samples/livre.pdf"  # Remplacez par votre chemin d'entrée
-vector_db_path = "./vector_db"  # Remplacez par votre chemin de sortie
-targetdb = vector_db_path + ".pkl"
-
-# Vérification des chemins
-assert os.path.exists(document_path), f"Chemin introuvable : {document_path}"
-
-# Chargement des documents
-if os.path.isdir(document_path):
-    loader = PyPDFDirectoryLoader(document_path)
-else:
-    loader = PyPDFLoader(document_path)
-
-documents = loader.load()
-
-# Segmentation optimisée du texte en chunks
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=100000, chunk_overlap=0)
-document_chunks = []
-for doc in documents:
-    chunks = text_splitter.split_documents([doc])
-    document_chunks.extend(chunks)
-
-# Création ou chargement de la base de données vectorielle
-if os.path.isfile(targetdb):
-    with open(targetdb, "rb") as f:
-        vector_store = pickle.load(f)
-    vector_store.add_documents(document_chunks)
-else:
-    embeddings = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-base", model_kwargs={"device": "cpu"})
-    vector_store = FAISS.from_documents(document_chunks, embeddings)
-
-# Sauvegarde de la base de données vectorielle
-with open(targetdb, "wb") as f:
-    pickle.dump(vector_store, f)
-```
-## Recherche dans la Base de Données Vectorielle
-
-Le script suivant montre comment interroger la base de données vectorielle pour rechercher des recettes spécifiques et afficher leurs informations pertinentes.
-
-```python
-import pickle
-from langchain_community.vectorstores import FAISS
-
-# Charger la base de données vectorielle
-vector_db_path = "./vector_db.pkl"
-with open(vector_db_path, "rb") as f:
-    vector_store = pickle.load(f)
-
-def get_document_by_id(doc_id):
-    """
-    Récupérer un document du vecteur stocké par son ID.
-    
-    Args:
-        doc_id (any): L'ID du document à récupérer
-    
-    Returns:
-        tuple: (document_id, document)
-    """
-    try:
-        document = vector_store.docstore._dict[doc_id]
-        return doc_id, document
-    except KeyError:
-        print(f"Aucun document trouvé avec l'ID '{doc_id}'.")
-        return None, None
-
-# Exemple d'utilisation
-specific_doc_id = "f4cea6cb-0463-4e45-b5b2-450412522490"
-document_id, document = get_document_by_id(specific_doc_id)
-
-if document:
-    print(f"Document ID : {document_id}")
-    print(f"Métadonnées : {document.metadata}")
-    print(f"Contenu : {document.page_content[:500]}")
-```
+Le code pour interroger la base de données vectorielle se trouve dans le fichier [`query_vector_database.py`](./query_vector_database.py).
 
 ## Contributions
 
