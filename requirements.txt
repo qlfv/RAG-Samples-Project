@@ -1,0 +1,7 @@
+langchain
+langchain_community
+sentence-transformers
+genai
+faiss-cpu
+python-dotenv
+pickle5
