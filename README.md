@@ -63,6 +63,46 @@ Ce projet est open source (MIT).
 
 ---
 
+## ⚠️ Limites des modèles utilisés et bonnes pratiques
+
+- Le modèle par défaut utilisé pour la génération est **GPT-2** (HuggingFace). Il n'est pas spécialisé pour le français ni pour le question/réponse technique : il fonctionne nettement mieux en anglais.
+- **Hallucinations** : GPT-2 peut inventer des réponses ou des noms de frameworks qui n'existent pas (ex : "LlamaTk").
+- **Compréhension limitée** : il peut générer des phrases grammaticalement correctes mais sans sens technique précis.
+- **Prompting** : la qualité du prompt (instructions, formulation) influence fortement la pertinence de la réponse.
+- **Pas de connaissances récentes** : GPT-2 ne connaît pas les frameworks ou concepts apparus après 2019.
+
+### Bonnes pratiques pour de meilleurs résultats
+
+- Privilégier l'anglais pour la génération avec GPT-2.
+- Pour le français, utiliser un modèle francophone (ex : `cmarkea/gpt2-small-french`) ou un pipeline "question-answering" (`illuin/camembert-base-fquad`).
+- Structurer les prompts : donner des instructions claires, préciser le contexte et la question.
+- Tester plusieurs modèles selon la tâche (génération libre vs Q&A).
+- Toujours valider la réponse générée avant de la présenter à un utilisateur final.
+
+---
+
+## ❓ FAQ sur la génération IA (RAG)
+
+**Q : Pourquoi la réponse générée n’est-elle pas toujours pertinente ?**
+> Les modèles comme GPT-2 ne comprennent pas réellement le sens : ils prédisent la suite la plus probable du texte. Ils peuvent donc générer des phrases correctes mais factuellement fausses ou hors sujet.
+
+**Q : Comment éviter que le modèle “invente” des informations ?**
+> Utilisez des modèles spécialisés pour le question/réponse (pipeline "question-answering") et structurez bien le prompt. Pour des tâches critiques, validez toujours la réponse générée.
+
+**Q : Peut-on utiliser d’autres modèles que GPT-2 ?**
+> Oui ! Essayez des modèles plus récents ou spécialisés (GPT-J, Falcon, Mistral, modèles francophones, etc.) disponibles sur HuggingFace.
+
+**Q : Comment améliorer la génération en français ?**
+> Utilisez un modèle francophone (ex : `cmarkea/gpt2-small-french`) ou un modèle Q&A entraîné sur des données françaises (`illuin/camembert-base-fquad`).
+
+**Q : Pourquoi le modèle ne connaît-il pas les frameworks récents ?**
+> Les modèles ont été entraînés sur des données arrêtées à une certaine date (ex : 2019 pour GPT-2). Ils ne connaissent pas les nouveautés apparues après.
+
+**Q : Peut-on utiliser RAG avec des documents PDF ou des sites web ?**
+> Oui, il suffit d’extraire le texte des documents et de l’indexer avec la même logique (voir les frameworks comme LangChain ou LlamaIndex pour des pipelines avancés).
+
+---
+
 **N’hésitez pas à proposer des améliorations ou à ouvrir des issues !**
 - **Manipulation et extraction d'informations** : La base de données vectorielle FAISS est utilisée pour la recherche de similarités et la génération de réponses basées sur les informations pertinentes.
 
