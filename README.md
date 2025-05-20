@@ -1,11 +1,69 @@
 # RAG-Samples-Project
 
-Ce répertoire, nommé **RAG-Samples-Project**, est dédié à la démonstration et à l'expérimentation des applications pratiques de la Génération Augmentée par Recherche (RAG - Retrieval Augmented Generation). Le projet vise à fournir des exemples concrets et des codes source en Python pour illustrer les différentes facettes de la RAG.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/qlfv/RAG-Samples-Project/blob/main/demo_rag.ipynb)
 
-## Objectifs du Projet
+Ce projet démontre la Génération Augmentée par Recherche (RAG) : comment combiner recherche documentaire et génération de texte pour des réponses plus précises.
 
-- **Démontrer l'utilisation de la RAG** : Ce projet contient des exemples clairs de l'utilisation de la génération augmentée par la recherche pour améliorer la qualité et la précision des réponses générées à partir de documents textuels.
-- **Exploration des modèles d'embeddings et de vectorisation** : Il montre comment utiliser des modèles de transformation de texte et des bases de données vectorielles pour stocker et interroger efficacement de grands volumes de texte.
+---
+
+## 🚀 Quickstart
+
+```bash
+# Clone le repo
+git clone https://github.com/qlfv/RAG-Samples-Project.git
+cd RAG-Samples-Project
+
+# Installe les dépendances (environnement Python >=3.8)
+pip install -r requirements.txt
+```
+
+Ou ouvre directement le notebook sur [Google Colab](https://colab.research.google.com/github/qlfv/RAG-Samples-Project/blob/main/demo_rag.ipynb).
+
+---
+
+## 🧠 Schéma du pipeline RAG
+
+```
+[Question utilisateur]
+          |
+   [Embeddings]
+          |
+   [Recherche dans index vectoriel]
+          |
+   [Passage retrouvé]
+          |
+   [Génération de réponse (LLM)]
+          |
+   [Réponse augmentée]
+```
+
+---
+
+## 📚 Pour aller plus loin
+
+- [LangChain](https://python.langchain.com/)
+- [LlamaIndex](https://www.llamaindex.ai/)
+- [Haystack](https://haystack.deepset.ai/)
+- [Paper original RAG (Facebook)](https://arxiv.org/abs/2005.11401)
+
+---
+
+## 📂 Structure recommandée
+
+- `demo_rag.ipynb` : Notebook de démo minimal
+- `src/` : Scripts Python modulaires (retrieval.py, generation.py…)
+- `data/` : Mini-datasets d’exemple
+- `README.md` : Documentation, schémas, liens
+
+---
+
+## 📝 Licence
+
+Ce projet est open source (MIT).
+
+---
+
+**N’hésitez pas à proposer des améliorations ou à ouvrir des issues !**
 - **Manipulation et extraction d'informations** : La base de données vectorielle FAISS est utilisée pour la recherche de similarités et la génération de réponses basées sur les informations pertinentes.
 
 ## Structure des Fichiers

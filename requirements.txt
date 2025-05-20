@@ -1,6 +1,9 @@
 langchain
 langchain_community
 sentence-transformers
+faiss-cpu
+transformers
+ntence-transformers
 genai
 faiss-cpu
 python-dotenv
